@@ -1,0 +1,6 @@
+finvizfinance
+yfinance
+pandas
+feedparser
+beautifulsoup4
+praw
