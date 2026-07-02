@@ -1,5 +1,10 @@
 import yfinance as yf
-from scanner_folder.reddit_scanner import RedditScanner
+
+from utils.score_calculator import ScoreCalculator
+from scanner_folder.insider_scanner import InsiderScanner
+
+scorer = ScoreCalculator()
+insider_scanner = InsiderScanner()
 
 tickers = [
     "COSM", "MBRX", "LRMR", "CRIS", "VNTG", "ADTX", "LABT", "SNOA", "BIVI", "ATNF",
@@ -26,17 +31,30 @@ for ticker in tickers:
         percent_change = ((current_close - previous_close) / previous_close) * 100
 
         if 15 <= percent_change <= 30 and current_close < 5 and volume > 500000:
-            print(
-                "🚀",
-                ticker,
-                "Price:",
-                round(current_close, 2),
-                "Change:",
-                round(percent_change, 2),
-                "%",
-                "Volume:",
-                volume
+
+            insider_buying = insider_scanner.has_insider_buying(ticker)
+
+            result = scorer.calculate_score(
+                percent_change=percent_change,
+                volume=volume,
+                insider_buying=insider_buying
             )
+
+            print("\n===================================")
+            print(f"🚀 {ticker}")
+            print(f"Price: ${round(current_close, 2)}")
+            print(f"Change: {round(percent_change, 2)}%")
+            print(f"Volume: {volume:,}")
+            print(f"Score: {result['score']}/100")
+
+            if insider_buying:
+                print("🟢 Insider buying detected!")
+
+            print("\nReasons:")
+            for reason in result["reasons"]:
+                print(f" • {reason}")
+
+            print("===================================")
 
     except Exception:
         continue
