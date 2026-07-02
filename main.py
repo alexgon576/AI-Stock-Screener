@@ -1,4 +1,5 @@
 import yfinance as yf
+from scanner_folder.reddit_scanner import RedditScanner
 
 tickers = [
     "COSM", "MBRX", "LRMR", "CRIS", "VNTG", "ADTX", "LABT", "SNOA", "BIVI", "ATNF",
@@ -39,3 +40,5 @@ for ticker in tickers:
 
     except Exception:
         continue
+
+print("\nReddit scanner is ready, but connection test is paused until API access is approved.")
